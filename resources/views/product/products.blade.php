@@ -15,7 +15,7 @@
         </div>
     @endif
 
-    <h1>Products</h1>
+    <h1>Products git</h1>
 
     <div class="d-flex justify-content-between mb-2">
         <a href="{{ route('product.create') }}" class="btn btn-primary">Create</a>
