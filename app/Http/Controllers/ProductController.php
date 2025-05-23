@@ -29,7 +29,7 @@ class ProductController extends Controller
     public function create()
     {
                 // យក Categories ទាំងអស់ និង Products របស់ពួកវា
-                $category = category::all();
+        $category = category::all();
         return view('product.create_product', ['category' => $category]);
     }
 
@@ -44,7 +44,7 @@ class ProductController extends Controller
             Product::create([
             'name' => $request->name,
             'slug' => $request->slug,
-            'desc' => $request->description,
+            'description' => $request->description,
             'price' => $request->price,
             'qty' => $request->qty,
             'category_id' => $request->category_id,
@@ -61,19 +61,29 @@ class ProductController extends Controller
 
     public function edit($id)
     {
-        return view('product.EditProduct');
+        $item = Product::with('category')->findOrFail($id);
+        $category = category::all();
+     return view('product.EditProduct', ['item'=>$item, 'category'=>$category]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+
+
     public function update(Request $request, $id)
     {
-        //
+        $item = Product::with('category')->findOrFail($id);
+        $category = category::all();
+        if(!$category){
+            return 'No data';
+        }
+        //dd($request->all());
+        $item->name = $request->name;
+        $item->slug = $request->slug;
+        $item->description = $request->description;
+        $item->price = $request->price;
+        $item->qty = $request->qty;
+        $item->category_id = $request->category_id;
+        $item->save();
+        return redirect()->route('product.index')->with('success', 'Product updated successfully');
     }
 
     /**
@@ -84,6 +94,12 @@ class ProductController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $item = Product::with('category')->findOrFail($id);
+        $category = category::all();
+        if(!$category){
+            return 'No data';
+        }
+        $item->delete($item->$id);
+        return redirect()->route('product.index');
     }
 }
